@@ -1,14 +1,43 @@
+import { useEffect, useState } from 'react';
+import ListingClass from '../util/ListingClass';
+import { getOpenListings } from '../util/interact';
+
 const Listings = ({ listings }) => {
+  const [saleListings, setSaleListings] = useState();
+
+  useEffect(() => {
+    async function fectchData() {
+      let openListings = listings;
+      //console.log(openListings);
+      try {
+        let mappedSaleListings = [];
+        openListings.forEach((element) => {
+          console.log(element);
+
+          let saleListing = ListingClass.ListingFactory(element);
+          console.log(saleListing);
+          mappedSaleListings.push(saleListing);
+        });
+
+        setSaleListings(mappedSaleListings);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fectchData();
+  }, [listings]);
+
   return (
     <div>
       <h1>Listings</h1>
-      {listings.map((listing) => {
-        return (
-          <div key={listing.id}>
-            <h2>listing.nft.metadata.name</h2>
-          </div>
-        );
-      })}
+      {saleListings && saleListings.length > 0 ? (
+        saleListings.map((saleListing, i) => (
+          <div key={i}>TokenID:{saleListing.tokenId}</div>
+        ))
+      ) : (
+        <div>No Listings Available</div>
+      )}
     </div>
   );
 };
@@ -16,11 +45,11 @@ const Listings = ({ listings }) => {
 export default Listings;
 
 export async function getServerSideProps() {
-  const response = await fetch('http://localhost:3002/news');
-  const data = await response.json();
+  const openListings = await getOpenListings();
+  //const data = await response.json();
   return {
     props: {
-      listings: data,
+      listings: openListings,
     },
   };
 }
