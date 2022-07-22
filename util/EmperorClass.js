@@ -7,15 +7,15 @@ class EmperorClass {
   }
 
   get type() {
-    return "Emperor";
+    return 'Emperor';
   }
 
-  static EmperorFactory(element) {
+  static EmperorFactory(tokenId, title, imageUrl, description) {
     let emperorInstance = new EmperorClass(
-      parseInt(element.id.tokenId, 16),
-      element.title,
-      element.metadata.image,
-      element.description
+      tokenId,
+      title,
+      imageUrl,
+      description
     );
 
     return emperorInstance;

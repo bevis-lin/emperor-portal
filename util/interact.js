@@ -1,15 +1,19 @@
 import EmperorClass from './EmperorClass.js';
+import ListingClass from './ListingClass.js';
 import { pinJSONToIPFS } from './pinata.js';
-//import axios from "axios";
+import axios from 'axios';
 //require("dotenv").config();
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const alchemyKeyRinkeby = process.env.REACT_APP_ALCHEMY_KEY_RINKEBY;
 const emperorContractABI = require('../abi/emperor-abi.json');
+const emperorFusionContractABI = require('../abi/emperorfusion-abi.json');
 const marketplaceContractABI = require('../abi/marketplace-abi.json');
 const tokenContractABI = require('../abi/matic-abi.json');
 
 const emperorContractAddress = process.env.REACT_APP_EMPEROR_CONTRACT;
+const emperorFusionContractAddress =
+  process.env.REACT_APP_EMPERORFUSION_CONTRACT;
 const marketplaceContractAddress = process.env.REACT_APP_MARKETPLACE_CONTRACT;
 const maticTokenAddress = '0x0000000000000000000000000000000000001010';
 
@@ -251,17 +255,31 @@ export const getContractEvent = async (contractName, eventName) => {
   return eventsResult;
 };
 
-export const getNFTTokenURI = async (tokenId) => {
+export const getNFTTokenURI = async (tokenType, tokenId) => {
   try {
-    const emperorContract = new web3.eth.Contract(
-      emperorContractABI,
-      emperorContractAddress
+    var tokenUri = '';
+    console.log(
+      'begin to call getTokenURI, type:' + tokenType + ',tokenId:' + tokenId
     );
-    const result = await emperorContract.methods.tokenURI(tokenId).call();
+    if (tokenType == 0) {
+      const emperorContract = new web3.eth.Contract(
+        emperorContractABI,
+        emperorContractAddress
+      );
+      tokenUri = await emperorContract.methods.tokenURI(tokenId).call();
+    } else if (tokenType == 1) {
+      const emperorFusionContract = new web3.eth.Contract(
+        emperorFusionContractABI,
+        emperorFusionContractAddress
+      );
+      tokenUri = await emperorFusionContract.methods.uri(tokenId).call();
+    } else {
+      throw new Error('Invalid tokenType:' + tokenType);
+    }
     //console.log(result);
-    return result;
+    return tokenUri;
   } catch (error) {
-    console.log(error);
+    console.log('Failed to get metadataURL:' + error);
     return null;
   }
 };
@@ -306,13 +324,86 @@ export const verifyMessage = async (messageToVerify, signature) => {
 
 export const getOpenListings = async () => {
   try {
+    console.log(marketplaceContractAddress);
+    const marketplaceContract = new web3.eth.Contract(
+      marketplaceContractABI,
+      marketplaceContractAddress
+    );
+    const result = await marketplaceContract.methods.getUnsoldListings().call();
+    console.log(
+      'printing result of getUnsoldListings.............................'
+    );
+    console.log(result);
+    let mappedSaleListings = [];
+    for (let i = 0; i < result.length; i++) {
+      let element = result[i];
+      console.log(
+        'Getting metadat url for type:' + element[1] + ', id:' + element[2]
+      );
+      let metadataURL = await getNFTTokenURI(element[1], element[2]);
+      var emperorTemp = null;
+      console.log('metadataURL:' + metadataURL);
+      if (metadataURL.length > 0) {
+        console.log('axios:getting metadata for url:' + metadataURL);
+        axios.get(metadataURL).then((res) => {
+          const nftMetadata = res.data;
+          console.log(nftMetadata);
+
+          emperorTemp = EmperorClass.EmperorFactory(
+            element[2],
+            nftMetadata.name,
+            nftMetadata.image.replace(
+              'gateway.pinata.cloud',
+              'ipfs.digi96.com'
+            ),
+            nftMetadata.description
+          );
+
+          if (emperorTemp != null) {
+            console.log('Show emperor.......');
+            console.log(emperorTemp);
+
+            let saleListing = ListingClass.ListingFactory(
+              element[0],
+              element[1],
+              element[2],
+              element[4],
+              element[3],
+              emperorTemp
+            );
+
+            console.log(saleListing);
+            mappedSaleListings.push(saleListing);
+          } else {
+            console.log('Failed to get emperor');
+          }
+        });
+      }
+    }
+
+    return mappedSaleListings;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const getOpenListingIds = async () => {
+  try {
+    console.log(marketplaceContractAddress);
     const marketplaceContract = new web3.eth.Contract(
       marketplaceContractABI,
       marketplaceContractAddress
     );
     const result = await marketplaceContract.methods.getUnsoldListings().call();
     //console.log(result);
-    return result;
+    let mappedSaleListingIds = [];
+    for (let i = 0; i < result.length; i++) {
+      let element = result[i];
+      mappedSaleListingIds.push(element[0]);
+    }
+    console.log(mappedSaleListingIds);
+    return mappedSaleListingIds;
   } catch (error) {
     console.log(error);
     return null;
