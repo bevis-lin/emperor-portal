@@ -1,12 +1,15 @@
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getOpenListings } from '../../util/interact';
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getOpenListings } from "../../util/interact";
 
 const Listings = ({ listings }) => {
   const [saleListings, setSaleListings] = useState();
 
   useEffect(() => {
-    setSaleListings(listings);
+    console.log("printing listings...");
+    console.log(listings);
+
+    setSaleListings(JSON.parse(listings));
   }, [listings]);
 
   return (
@@ -30,7 +33,7 @@ const Listings = ({ listings }) => {
                 <p className="card-text text-truncate">
                   {saleListing.emperor.description}
                 </p>
-                <Link href={'/listings/' + saleListing.id}>
+                <Link href={"/listings/" + saleListing.id}>
                   <a className="card-link">More</a>
                 </Link>
               </div>
@@ -51,7 +54,7 @@ export async function getServerSideProps() {
   //const data = await response.json();
   return {
     props: {
-      listings: openListings,
+      listings: JSON.stringify(openListings),
     },
   };
 }

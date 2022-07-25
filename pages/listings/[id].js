@@ -2,11 +2,11 @@ import {
   getOpenListings,
   getOpenListingByListingId,
   getOpenListingIds,
-} from '../../util/interact';
-import ListingClass from '../../util/ListingClass';
+} from "../../util/interact";
+import ListingClass from "../../util/ListingClass";
 
 export const getStaticPaths = async () => {
-  console.log('getting sale listings..');
+  console.log("getting sale listings..");
   let openListingIds = await getOpenListingIds();
   const paths = openListingIds.map((listingId) => {
     return {
@@ -22,7 +22,7 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const id = context.params.id;
-  console.log('getStaticProps been called....,id:', id);
+  console.log("getStaticProps been called....,id:", id);
   let openListing = await getOpenListingByListingId(id);
   return {
     props: {
@@ -32,14 +32,16 @@ export const getStaticProps = async (context) => {
 };
 
 const Details = ({ listing }) => {
-  //console.log(listing);
-  var listingVar = JSON.parse(listing);
-  return (
-    <div>
-      <h1>{listingVar.id}</h1>
-      <h1>{listingVar.emperor.name}</h1>
-    </div>
-  );
+  if (typeof window === undefined) {
+    console.log(listing);
+    var listingVar = JSON.parse(listing);
+    return (
+      <div>
+        <h1>{listingVar.id}</h1>
+        <h1>{listingVar.emperor.name}</h1>
+      </div>
+    );
+  }
 };
 
 export default Details;
