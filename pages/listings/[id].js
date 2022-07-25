@@ -1,4 +1,8 @@
-import { getOpenListings } from '../../util/interact';
+import {
+  getOpenListings,
+  getOpenListingByListingId,
+  getOpenListingIds,
+} from '../../util/interact';
 import ListingClass from '../../util/ListingClass';
 
 export const getStaticPaths = async () => {
@@ -18,17 +22,17 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const id = context.params.id;
-  let openListings = await getOpenListings();
-  let listing = openListings.find((element) => element.id == id);
+  console.log('getStaticProps been called....,id:', id);
+  let openListing = await getOpenListingByListingId(id);
   return {
     props: {
-      listing: JSON.stringify(listing),
+      listing: JSON.stringify(openListing),
     },
   };
 };
 
 const Details = ({ listing }) => {
-  console.log(listing);
+  //console.log(listing);
   var listingVar = JSON.parse(listing);
   return (
     <div>

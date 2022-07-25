@@ -345,43 +345,157 @@ export const getOpenListings = async () => {
       console.log('metadataURL:' + metadataURL);
       if (metadataURL.length > 0) {
         console.log('axios:getting metadata for url:' + metadataURL);
-        axios.get(metadataURL).then((res) => {
-          const nftMetadata = res.data;
-          console.log(nftMetadata);
+        await axios
+          .get(metadataURL)
+          .catch(function (error) {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              console.log(error.request);
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('Error', error.message);
+            }
+            console.log(error.config);
+          })
+          .then((res) => {
+            const nftMetadata = res.data;
+            console.log(nftMetadata);
 
-          emperorTemp = EmperorClass.EmperorFactory(
-            element[2],
-            nftMetadata.name,
-            nftMetadata.image.replace(
-              'gateway.pinata.cloud',
-              'ipfs.digi96.com'
-            ),
-            nftMetadata.description
-          );
-
-          if (emperorTemp != null) {
-            console.log('Show emperor.......');
-            console.log(emperorTemp);
-
-            let saleListing = ListingClass.ListingFactory(
-              element[0],
-              element[1],
+            emperorTemp = EmperorClass.EmperorFactory(
               element[2],
-              element[4],
-              element[3],
-              emperorTemp
+              nftMetadata.name,
+              nftMetadata.image.replace(
+                'gateway.pinata.cloud',
+                'ipfs.digi96.com'
+              ),
+              nftMetadata.description
             );
 
-            console.log(saleListing);
-            mappedSaleListings.push(saleListing);
-          } else {
-            console.log('Failed to get emperor');
-          }
-        });
+            if (emperorTemp != null) {
+              console.log('Emperor has been initialized...');
+              //console.log(emperorTemp);
+
+              let saleListing = ListingClass.ListingFactory(
+                element[0],
+                element[1],
+                element[2],
+                element[4],
+                element[3],
+                emperorTemp
+              );
+
+              if (saleListing != null) {
+                console.log('SaleListing has been initialized...');
+                mappedSaleListings.push(saleListing);
+              }
+            } else {
+              console.log('Failed to get emperor');
+            }
+          });
       }
     }
 
     return mappedSaleListings;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export const getOpenListingByListingId = async (listingId) => {
+  try {
+    console.log(marketplaceContractAddress);
+    const marketplaceContract = new web3.eth.Contract(
+      marketplaceContractABI,
+      marketplaceContractAddress
+    );
+    const result = await marketplaceContract.methods.getUnsoldListings().call();
+    console.log(
+      'printing result of getUnsoldListings.............................'
+    );
+    console.log(result);
+    let mappedSaleListing = null;
+    for (let i = 0; i < result.length; i++) {
+      let element = result[i];
+      if (element[0] != listingId) {
+        continue;
+      }
+
+      console.log(
+        'Getting metadat url for type:' + element[1] + ', id:' + element[2]
+      );
+      let metadataURL = await getNFTTokenURI(element[1], element[2]);
+      var emperorTemp = null;
+      console.log('metadataURL:' + metadataURL);
+      if (metadataURL.length > 0) {
+        console.log('axios:getting metadata for url:' + metadataURL);
+        await axios
+          .get(metadataURL)
+          .catch(function (error) {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              console.log(error.request);
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('Error', error.message);
+            }
+            console.log(error.config);
+          })
+          .then((res) => {
+            const nftMetadata = res.data;
+            console.log(nftMetadata);
+
+            emperorTemp = EmperorClass.EmperorFactory(
+              element[2],
+              nftMetadata.name,
+              nftMetadata.image.replace(
+                'gateway.pinata.cloud',
+                'ipfs.digi96.com'
+              ),
+              nftMetadata.description
+            );
+
+            if (emperorTemp != null) {
+              console.log('Emperor has been initialized...');
+              //console.log(emperorTemp);
+
+              let saleListing = ListingClass.ListingFactory(
+                element[0],
+                element[1],
+                element[2],
+                element[4],
+                element[3],
+                emperorTemp
+              );
+
+              if (saleListing != null) {
+                console.log('SaleListing has been initialized...');
+                mappedSaleListing = saleListing;
+              }
+            } else {
+              console.log('Failed to get emperor');
+            }
+          });
+      }
+    }
+
+    return mappedSaleListing;
   } catch (error) {
     console.log(error);
     return null;
