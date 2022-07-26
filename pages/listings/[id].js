@@ -1,12 +1,10 @@
 import {
-  getOpenListings,
   getOpenListingByListingId,
   getOpenListingIds,
-} from "../../util/interact";
-import ListingClass from "../../util/ListingClass";
+} from '../../util/interact';
 
 export const getStaticPaths = async () => {
-  console.log("getting sale listings..");
+  console.log('getting sale listings..');
   let openListingIds = await getOpenListingIds();
   const paths = openListingIds.map((listingId) => {
     return {
@@ -22,26 +20,27 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const id = context.params.id;
-  console.log("getStaticProps been called....,id:", id);
-  let openListing = await getOpenListingByListingId(id);
+  console.log('getStaticProps been called....,id:', id);
+  let listing = await getOpenListingByListingId(id);
+  listing = JSON.stringify(listing);
   return {
-    props: {
-      listing: JSON.stringify(openListing),
-    },
+    props: { listing },
   };
 };
 
 const Details = ({ listing }) => {
-  if (typeof window === undefined) {
-    console.log(listing);
-    var listingVar = JSON.parse(listing);
-    return (
-      <div>
-        <h1>{listingVar.id}</h1>
-        <h1>{listingVar.emperor.name}</h1>
-      </div>
-    );
-  }
+  //return <div>OK</div>;
+  console.log(listing);
+  var listingVar = JSON.parse(listing);
+  return (
+    <div>
+      <h1>{listingVar.id}</h1>
+      <h1>{listingVar.price}</h1>
+      <img src={listingVar.imageUrl} />
+      <h1>{listingVar.emperor.name}</h1>
+    </div>
+  );
+  //return <div>OK</div>;
 };
 
 export default Details;

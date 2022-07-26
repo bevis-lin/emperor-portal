@@ -1,23 +1,23 @@
-import EmperorClass from "./EmperorClass.js";
-import ListingClass from "./ListingClass.js";
-import { pinJSONToIPFS } from "./pinata.js";
-import axios from "axios";
+import EmperorClass from './EmperorClass.js';
+import ListingClass from './ListingClass.js';
+import { pinJSONToIPFS } from './pinata.js';
+import axios from 'axios';
 //require("dotenv").config();
 
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const alchemyKeyRinkeby = process.env.REACT_APP_ALCHEMY_KEY_RINKEBY;
-const emperorContractABI = require("../abi/emperor-abi.json");
-const emperorFusionContractABI = require("../abi/emperorfusion-abi.json");
-const marketplaceContractABI = require("../abi/marketplace-abi.json");
-const tokenContractABI = require("../abi/matic-abi.json");
+const emperorContractABI = require('../abi/emperor-abi.json');
+const emperorFusionContractABI = require('../abi/emperorfusion-abi.json');
+const marketplaceContractABI = require('../abi/marketplace-abi.json');
+const tokenContractABI = require('../abi/matic-abi.json');
 
 const emperorContractAddress = process.env.REACT_APP_EMPEROR_CONTRACT;
 const emperorFusionContractAddress =
   process.env.REACT_APP_EMPERORFUSION_CONTRACT;
 const marketplaceContractAddress = process.env.REACT_APP_MARKETPLACE_CONTRACT;
-const maticTokenAddress = "0x0000000000000000000000000000000000001010";
+const maticTokenAddress = '0x0000000000000000000000000000000000001010';
 
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
 const web3 = createAlchemyWeb3(alchemyKey);
 //const web3 = createAlchemyWeb3("http://localhost:8545");
 
@@ -25,27 +25,27 @@ export const connectWallet = async () => {
   if (window.ethereum) {
     try {
       const addressArray = await window.ethereum.request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
       });
       const obj = {
-        status: "Wallet conntected.",
+        status: 'Wallet conntected.',
         address: addressArray[0],
       };
       return obj;
     } catch (err) {
       return {
-        address: "",
-        status: "😥 " + err.message,
+        address: '',
+        status: '😥 ' + err.message,
       };
     }
   } else {
     return {
-      address: "",
+      address: '',
       status: (
         <span>
           <p>
-            {" "}
-            🦊{" "}
+            {' '}
+            🦊{' '}
             <a target="_blank" href={`https://metamask.io/download.html`}>
               You must install Metamask, a virtual Ethereum wallet, in your
               browser.
@@ -61,33 +61,33 @@ export const getCurrentWalletConnected = async () => {
   if (window.ethereum) {
     try {
       const addressArray = await window.ethereum.request({
-        method: "eth_accounts",
+        method: 'eth_accounts',
       });
       if (addressArray.length > 0) {
         return {
           address: addressArray[0],
-          status: "Wallet connected.",
+          status: 'Wallet connected.',
         };
       } else {
         return {
-          address: "",
-          status: "🦊 Connect to Metamask using the top right button.",
+          address: '',
+          status: '🦊 Connect to Metamask using the top right button.',
         };
       }
     } catch (err) {
       return {
-        address: "",
-        status: "😥 " + err.message,
+        address: '',
+        status: '😥 ' + err.message,
       };
     }
   } else {
     return {
-      address: "",
+      address: '',
       status: (
         <span>
           <p>
-            {" "}
-            🦊{" "}
+            {' '}
+            🦊{' '}
             <a target="_blank" href={`https://metamask.io/download.html`}>
               You must install Metamask, a virtual Ethereum wallet, in your
               browser.
@@ -104,10 +104,10 @@ async function loadContract() {
 }
 
 export const mintNFT = async (url, name, description) => {
-  if (url.trim() == "" || name.trim() == "" || description.trim() == "") {
+  if (url.trim() == '' || name.trim() == '' || description.trim() == '') {
     return {
       success: false,
-      status: "❗Please make sure all fields are completed before minting.",
+      status: '❗Please make sure all fields are completed before minting.',
     };
   }
 
@@ -118,11 +118,11 @@ export const mintNFT = async (url, name, description) => {
   metadata.description = description;
 
   var trait1 = new Object();
-  trait1.name = "Stamina";
+  trait1.name = 'Stamina';
   trait1.value = 3;
 
   var trait2 = new Object();
-  trait2.name = "Power";
+  trait2.name = 'Power';
   trait2.value = 9;
 
   var traits = new Array();
@@ -135,7 +135,7 @@ export const mintNFT = async (url, name, description) => {
   if (!pinataResponse.success) {
     return {
       success: false,
-      status: "😢 Something went wrong while uploading your tokenURI.",
+      status: '😢 Something went wrong while uploading your tokenURI.',
     };
   }
   const tokenURI = pinataResponse.pinataUrl;
@@ -157,20 +157,20 @@ export const mintNFT = async (url, name, description) => {
 
   try {
     const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
+      method: 'eth_sendTransaction',
       params: [transactionParameters],
     });
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/" +
+        '✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/' +
         txHash,
       data: txHash,
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: '😥 Something went wrong: ' + error.message,
     };
   }
 };
@@ -192,7 +192,7 @@ export const getTokenBalance = async (ownerAddr) => {
     );
     const result = await maticTokenContract.methods.balanceOf(ownerAddr).call();
     //console.log(web3.utils.fromWei(result, 'ether'));
-    var amount = web3.utils.fromWei(result, "ether");
+    var amount = web3.utils.fromWei(result, 'ether');
     return amount;
   } catch (error) {
     console.log(error);
@@ -219,18 +219,18 @@ export const getConnectedChainId = async () => {
 export const getContractEvent = async (contractName, eventName) => {
   var contract = null;
 
-  if (contractName === "Emperor") {
+  if (contractName === 'Emperor') {
     contract = new web3.eth.Contract(
       emperorContractABI,
       emperorContractAddress
     );
-  } else if (contractName === "Marketplace") {
+  } else if (contractName === 'Marketplace') {
     contract = new web3.eth.Contract(
       marketplaceContractABI,
       marketplaceContractAddress
     );
   } else {
-    throw "Unexpected contract name";
+    throw 'Unexpected contract name';
   }
 
   console.log(`getting event from contract ${contractName}`);
@@ -241,7 +241,7 @@ export const getContractEvent = async (contractName, eventName) => {
     eventName,
     {
       fromBlock: latest_block - 6,
-      toBlock: "latest",
+      toBlock: 'latest',
     },
     function (error, events) {
       if (error) {
@@ -257,9 +257,9 @@ export const getContractEvent = async (contractName, eventName) => {
 
 export const getNFTTokenURI = async (tokenType, tokenId) => {
   try {
-    var tokenUri = "";
+    var tokenUri = '';
     console.log(
-      "begin to call getTokenURI, type:" + tokenType + ",tokenId:" + tokenId
+      'begin to call getTokenURI, type:' + tokenType + ',tokenId:' + tokenId
     );
     if (tokenType == 0) {
       const emperorContract = new web3.eth.Contract(
@@ -274,12 +274,12 @@ export const getNFTTokenURI = async (tokenType, tokenId) => {
       );
       tokenUri = await emperorFusionContract.methods.uri(tokenId).call();
     } else {
-      throw new Error("Invalid tokenType:" + tokenType);
+      throw new Error('Invalid tokenType:' + tokenType);
     }
     //console.log(result);
     return tokenUri;
   } catch (error) {
-    console.log("Failed to get metadataURL:" + error);
+    console.log('Failed to get metadataURL:' + error);
     return null;
   }
 };
@@ -288,21 +288,21 @@ export const signMessage = async (messageToSign) => {
   try {
     const from = window.ethereum.selectedAddress;
     const sign = await window.ethereum.request({
-      method: "personal_sign",
-      params: [messageToSign, from, "emperor"],
+      method: 'personal_sign',
+      params: [messageToSign, from, 'emperor'],
     });
 
-    console.log("sign : " + sign);
+    console.log('sign : ' + sign);
 
     return {
       success: true,
-      status: "Sign successfully",
+      status: 'Sign successfully',
       data: sign,
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: '😥 Something went wrong: ' + error.message,
     };
   }
 };
@@ -331,20 +331,20 @@ export const getOpenListings = async () => {
     );
     const result = await marketplaceContract.methods.getUnsoldListings().call();
     console.log(
-      "printing result of getUnsoldListings............................."
+      'printing result of getUnsoldListings.............................'
     );
     console.log(result);
     let mappedSaleListings = [];
     for (let i = 0; i < result.length; i++) {
       let element = result[i];
       console.log(
-        "Getting metadat url for type:" + element[1] + ", id:" + element[2]
+        'Getting metadat url for type:' + element[1] + ', id:' + element[2]
       );
       let metadataURL = await getNFTTokenURI(element[1], element[2]);
       var emperorTemp = null;
-      console.log("metadataURL:" + metadataURL);
+      console.log('metadataURL:' + metadataURL);
       if (metadataURL.length > 0) {
-        console.log("axios:getting metadata for url:" + metadataURL);
+        console.log('axios:getting metadata for url:' + metadataURL);
         await axios
           .get(metadataURL)
           .catch(function (error) {
@@ -361,7 +361,7 @@ export const getOpenListings = async () => {
               console.log(error.request);
             } else {
               // Something happened in setting up the request that triggered an Error
-              console.log("Error", error.message);
+              console.log('Error', error.message);
             }
             console.log(error.config);
           })
@@ -373,14 +373,14 @@ export const getOpenListings = async () => {
               element[2],
               nftMetadata.name,
               nftMetadata.image.replace(
-                "gateway.pinata.cloud",
-                "ipfs.digi96.com"
+                'gateway.pinata.cloud',
+                'ipfs.digi96.com'
               ),
               nftMetadata.description
             );
 
             if (emperorTemp != null) {
-              console.log("Emperor has been initialized...");
+              console.log('Emperor has been initialized...');
               //console.log(emperorTemp);
 
               let saleListing = ListingClass.ListingFactory(
@@ -393,17 +393,17 @@ export const getOpenListings = async () => {
               );
 
               if (saleListing != null) {
-                console.log("SaleListing has been initialized...");
+                console.log('SaleListing has been initialized...');
                 mappedSaleListings.push(saleListing);
               }
             } else {
-              console.log("Failed to get emperor");
+              console.log('Failed to get emperor');
             }
           });
       }
     }
 
-    console.log("returning salelistings from interact...");
+    console.log('returning salelistings from interact...');
     return mappedSaleListings;
   } catch (error) {
     console.log(error);
@@ -420,7 +420,7 @@ export const getOpenListingByListingId = async (listingId) => {
     );
     const result = await marketplaceContract.methods.getUnsoldListings().call();
     console.log(
-      "printing result of getUnsoldListings............................."
+      'printing result of getUnsoldListings in getOpenListingByListingId............................'
     );
     console.log(result);
     let mappedSaleListing = null;
@@ -431,13 +431,13 @@ export const getOpenListingByListingId = async (listingId) => {
       }
 
       console.log(
-        "Getting metadat url for type:" + element[1] + ", id:" + element[2]
+        'Getting metadat url for type:' + element[1] + ', id:' + element[2]
       );
       let metadataURL = await getNFTTokenURI(element[1], element[2]);
       var emperorTemp = null;
-      console.log("metadataURL:" + metadataURL);
+      console.log('metadataURL:' + metadataURL);
       if (metadataURL.length > 0) {
-        console.log("axios:getting metadata for url:" + metadataURL);
+        console.log('axios:getting metadata for url:' + metadataURL);
         await axios
           .get(metadataURL)
           .catch(function (error) {
@@ -454,7 +454,7 @@ export const getOpenListingByListingId = async (listingId) => {
               console.log(error.request);
             } else {
               // Something happened in setting up the request that triggered an Error
-              console.log("Error", error.message);
+              console.log('Error', error.message);
             }
             console.log(error.config);
           })
@@ -466,14 +466,14 @@ export const getOpenListingByListingId = async (listingId) => {
               element[2],
               nftMetadata.name,
               nftMetadata.image.replace(
-                "gateway.pinata.cloud",
-                "ipfs.digi96.com"
+                'gateway.pinata.cloud',
+                'ipfs.digi96.com'
               ),
               nftMetadata.description
             );
 
             if (emperorTemp != null) {
-              console.log("Emperor has been initialized...");
+              console.log('Emperor has been initialized...');
               //console.log(emperorTemp);
 
               let saleListing = ListingClass.ListingFactory(
@@ -486,11 +486,11 @@ export const getOpenListingByListingId = async (listingId) => {
               );
 
               if (saleListing != null) {
-                console.log("SaleListing has been initialized...");
+                console.log('SaleListing has been initialized...');
                 mappedSaleListing = saleListing;
               }
             } else {
-              console.log("Failed to get emperor");
+              console.log('Failed to get emperor');
             }
           });
       }
@@ -549,20 +549,20 @@ export const purchaseListing = async (listingId, price) => {
 
   try {
     const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
+      method: 'eth_sendTransaction',
       params: [transactionParameters],
     });
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/" +
+        '✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/' +
         txHash,
       data: txHash,
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: '😥 Something went wrong: ' + error.message,
     };
   }
 };
@@ -615,20 +615,20 @@ export const setApprovalForNFTTransfer = async () => {
 
   try {
     const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
+      method: 'eth_sendTransaction',
       params: [transactionParameters],
     });
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/" +
+        '✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/' +
         txHash,
       data: txHash,
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: '😥 Something went wrong: ' + error.message,
     };
   }
 };
@@ -639,7 +639,7 @@ export const createSecondaryListing = async (tokenId, price) => {
     marketplaceContractAddress
   );
 
-  const weiValue = web3.utils.toWei(price, "ether");
+  const weiValue = web3.utils.toWei(price, 'ether');
   console.log(weiValue);
 
   const valuePrice = web3.utils.toHex(weiValue);
@@ -654,20 +654,20 @@ export const createSecondaryListing = async (tokenId, price) => {
 
   try {
     const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
+      method: 'eth_sendTransaction',
       params: [transactionParameters],
     });
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/" +
+        '✅ Check out your transaction on Etherscan: https://mumbai.polygonscan.com/tx/' +
         txHash,
       data: txHash,
     };
   } catch (error) {
     return {
       success: false,
-      status: "😥 Something went wrong: " + error.message,
+      status: '😥 Something went wrong: ' + error.message,
     };
   }
 };
