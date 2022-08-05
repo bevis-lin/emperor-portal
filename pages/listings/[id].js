@@ -62,8 +62,8 @@ const Details = ({ listing }) => {
     checkMetamask();
   }, []);
 
-  if (install) return <h2>Install MetaMask</h2>;
-  if (!network) return <h2>Wrong Network</h2>;
+  if (install) return <p>Install MetaMask</p>;
+  if (!network) return <p>Detecting network or wrong network detected.</p>;
 
   const onPurchasePressed = async () => {
     var listingVar = JSON.parse(listing);
@@ -128,16 +128,33 @@ const Details = ({ listing }) => {
   console.log(listing);
   var listingVar = JSON.parse(listing);
   return (
-    <div>
-      <h1>Listing Id:{listingVar.id}</h1>
-      <h1>Price: {web3.utils.fromWei(listingVar.price, 'ether')} ether</h1>
-      <h1>{listingVar.emperor.name}</h1>
-      <img src={listingVar.emperor.imageUrl} />
-      <h3>{listingVar.emperor.description}</h3>
-      <button onClick={onPurchasePressed}>Buy</button>
-      <p id="status" style={{ color: 'red' }}>
-        {status}
-      </p>
+    <div className="container text-left">
+      <div className="row row-col2">
+        <div className="col">
+          <img className="img-fluid" src={listingVar.emperor.imageUrl} />
+        </div>
+        <div className="col">
+          <p className="h5">{listingVar.emperor.name}</p>
+          <p>
+            Type:&nbsp;<b>{listingVar.tokenType}</b>
+          </p>
+          <p>
+            Price:&nbsp;<b>{web3.utils.fromWei(listingVar.price, 'ether')}</b>{' '}
+            ether
+          </p>
+          <p>{listingVar.emperor.description}</p>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onPurchasePressed}
+          >
+            Buy
+          </button>
+          <p id="status" style={{ color: 'red' }}>
+            {status}
+          </p>
+        </div>
+      </div>
     </div>
   );
   //return <div>OK</div>;
