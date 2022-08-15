@@ -10,17 +10,14 @@ const NFTs = () => {
   const [contractNFTs, setContractNFTs] = useState(null);
   const [pageSize, setPageSize] = useState(20);
   const [pageKey, setPageKey] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getNFTsForContract();
-  }, [pageKey, isLoading]);
+  }, [pageKey]);
 
   const getNFTsForContract = async () => {
     console.log('getNFTsForContract been called......');
     if (!contractNFTs) {
-      setIsLoading(true);
-
       const alchemy = new Alchemy(settings);
 
       let queryOptions = {
@@ -35,7 +32,6 @@ const NFTs = () => {
       );
 
       console.log(response);
-      setIsLoading(false);
       setContractNFTs(response);
     } else {
       console.log('contracts NFTs data already loaded.....');
@@ -88,28 +84,18 @@ const NFTs = () => {
             }
           })
         ) : (
-          <div></div>
+          <div>Loading...</div>
         )}
       </div>
-      {isLoading ? <div>Loading.......</div> : <div></div>}
-      <p>
-        {pageKey > 1 && (
-          <button type="buttom" onClick={onFirsrtPageClick}>
-            First
-          </button>
-        )}
-        {pageKey > pageSize && (
-          <button type="buttom" onClick={onPreviousPageClick}>
-            Previous
-          </button>
-        )}
-        <button type="buttom" onClick={onNextPageClick}>
-          Next
-        </button>
-      </p>
-      <p>
-        Token Id: From {pageKey} To {pageKey + pageSize}
-      </p>
+      <button type="buttom" onClick={onFirsrtPageClick}>
+        First
+      </button>
+      <button type="buttom" onClick={onPreviousPageClick}>
+        Previous
+      </button>
+      <button type="buttom" onClick={onNextPageClick}>
+        Next
+      </button>
     </div>
   );
 };

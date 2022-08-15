@@ -1,39 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { signMessage } from '../util/interact.js';
 
 const Sign = () => {
   const [install, setInstall] = useState(false);
   const [network, setNetwork] = useState(false); //False if wrong network
   const [cookies, setCookie] = useCookies(['signature']);
 
-  const signMessage = async (messageToSign) => {
-    try {
-      const from = window.ethereum.selectedAddress;
-      const sign = await window.ethereum.request({
-        method: 'personal_sign',
-        params: [messageToSign, from, 'emperor'],
-      });
-
-      console.log('sign : ' + sign);
-
-      return {
-        success: true,
-        status: 'Sign successfully',
-        data: sign,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        status: '😥 Something went wrong: ' + error.message,
-      };
-    }
-  };
-
   const onSignMessagePressed = async () => {
     const message =
       'Welcome to vist Emperor, this request is to get a signature from you, here after we will use this signature to get your wallet address';
     const signResult = await signMessage(message);
     if (signResult.success) {
+      setSignature(signResult.data);
       //cookie.set('signature', true, signResult.data);
       setCookie('signature', signResult.data, { path: '/' });
     }

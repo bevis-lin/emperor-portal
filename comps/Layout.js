@@ -1,17 +1,20 @@
 import Footer from './Footer';
 import Navbar from './Navbar';
+import Providers from '../providers/Providers.comp';
 
 const Layout = ({ children }) => {
   return (
-    <div className="content">
-      <Navbar />
-      <br></br>
-      <br></br>
-      <br></br>
-      {children}
-      <Footer />
-      <br></br>
-    </div>
+    <Providers>
+      <div className="content">
+        <Navbar />
+        <br></br>
+        <br></br>
+        <br></br>
+        {children}
+        <Footer />
+        <br></br>
+      </div>
+    </Providers>
   );
 };
 
