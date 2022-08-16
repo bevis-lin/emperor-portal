@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+//import { signMessage } from '../util/interactLocal.js';
 
 import useCurrentUser from '../hooks/use-current-user.hook';
 

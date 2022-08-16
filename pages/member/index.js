@@ -1,6 +1,7 @@
+import Document from 'next/document';
 import { useAuth } from '../../providers/AuthProvider';
 const Member = () => {
-  const { address, signed, sign, unsign } = useAuth();
+  const { address, signed, signMessage, unsign } = useAuth();
 
   return (
     <div>
@@ -16,7 +17,11 @@ const Member = () => {
       {!signed && (
         <div>
           Use has no signature...<br></br>
-          <button type="button" className="btn btn-primary" onClick={sign}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={signMessage}
+          >
             Sign
           </button>
         </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { signMessage } from '../util/interact.js';
+import { signMessage } from '../../util/interactLocal.js';
 
 const Sign = () => {
   const [install, setInstall] = useState(false);
@@ -10,7 +10,7 @@ const Sign = () => {
   const onSignMessagePressed = async () => {
     const message =
       'Welcome to vist Emperor, this request is to get a signature from you, here after we will use this signature to get your wallet address';
-    const signResult = await signMessage(message);
+    const signResult = await signMessage();
     if (signResult.success) {
       setSignature(signResult.data);
       //cookie.set('signature', true, signResult.data);

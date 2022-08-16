@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { signMessage } from '../util/interactLocal.js';
 
 const useCurrentUser = () => {
   const [install, setInstall] = useState(false);
@@ -8,31 +9,35 @@ const useCurrentUser = () => {
   const [signature, setSignature] = useState();
   const [cookies, setCookie, removeCookie] = useCookies(['signature']);
 
-  const signMessage = async (messageToSign) => {
-    try {
-      const from = window.ethereum.selectedAddress;
-      setAddress(from);
-      const sign = await window.ethereum.request({
-        method: 'personal_sign',
-        params: [messageToSign, from, 'emperor'],
-      });
+  // const signMessage = async () => {
+  //   console.log('signing from hook...');
+  //   try {
+  //     const messageToSign =
+  //       'Welcome to vist Emperor, this request is to get a signature from you, here after we will use this signature to get your wallet address';
 
-      console.log('sign : ' + sign);
+  //     const from = window.ethereum.selectedAddress;
+  //     setAddress(from);
+  //     const sign = await window.ethereum.request({
+  //       method: 'personal_sign',
+  //       params: [messageToSign, from, 'emperor'],
+  //     });
 
-      setCookie('signature', sign, { path: '/' });
+  //     console.log('sign : ' + sign);
 
-      return {
-        success: true,
-        status: 'Sign successfully',
-        data: sign,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        status: '😥 Something went wrong: ' + error.message,
-      };
-    }
-  };
+  //     setCookie('signature', sign, { path: '/' });
+
+  //     return {
+  //       success: true,
+  //       status: 'Sign successfully',
+  //       data: sign,
+  //     };
+  //   } catch (error) {
+  //     return {
+  //       success: false,
+  //       status: '😥 Something went wrong: ' + error.message,
+  //     };
+  //   }
+  // };
 
   const unsignMessage = async () => {
     try {
@@ -51,7 +56,7 @@ const useCurrentUser = () => {
   };
 
   const tools = {
-    sign: signMessage,
+    signMessage: signMessage,
     unsign: unsignMessage,
   };
 
