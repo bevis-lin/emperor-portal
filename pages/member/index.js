@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useAuth } from "../../providers/AuthProvider";
 const Member = () => {
@@ -7,10 +7,10 @@ const Member = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!signed) {
-      //router.push("/member/sign");
+    if (address && !signed) {
+      router.push("/member/sign");
     }
-  }, [signed]);
+  }, [address, signed]);
 
   return (
     <div>

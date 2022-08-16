@@ -3,7 +3,8 @@ import Layout from "../comps/Layout";
 import Head from "next/head";
 import "../styles/globals.css";
 import { useEffect } from "react";
-import AuthProvider from "../providers/AuthProvider";
+//import AuthProvider from "../providers/AuthProvider";
+import Providers from "../providers/Providers.comp";
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -11,14 +12,14 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <AuthProvider>
+    <Providers>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Layout>
         <Component {...pageProps} />
       </Layout>
-    </AuthProvider>
+    </Providers>
   );
 }
 

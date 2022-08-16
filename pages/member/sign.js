@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { signMessage } from "../../util/interactLocal.js";
+import { useRouter } from "next/router";
+import { useAuth } from "../../providers/AuthProvider";
 
 const Sign = () => {
+  const { signMessage } = useAuth();
   const [install, setInstall] = useState(false);
   const [network, setNetwork] = useState(false); //False if wrong network
   const [cookies, setCookie] = useCookies(["signature"]);
+  const router = useRouter();
 
   const onSignMessagePressed = async () => {
-    const message =
-      "Welcome to vist Emperor, this request is to get a signature from you, here after we will use this signature to get your wallet address";
     const signResult = await signMessage();
     if (signResult.success) {
       //ßsetSignature(signResult.data);
       //cookie.set('signature', true, signResult.data);
       setCookie("signature", signResult.data, { path: "/" });
+      router.push("/member");
     }
   };
 
