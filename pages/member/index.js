@@ -1,7 +1,16 @@
-import Document from 'next/document';
-import { useAuth } from '../../providers/AuthProvider';
+import Link from "next/link";
+import Router, { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useAuth } from "../../providers/AuthProvider";
 const Member = () => {
   const { address, signed, signMessage, unsign } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!signed) {
+      //router.push("/member/sign");
+    }
+  }, [signed]);
 
   return (
     <div>

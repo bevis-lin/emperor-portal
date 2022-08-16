@@ -1,12 +1,14 @@
-import { Network, Alchemy } from 'alchemy-sdk';
-import { useEffect, useState } from 'react';
+import { Network, Alchemy } from "alchemy-sdk";
+import { useEffect, useState } from "react";
+import { useAuth } from "../providers/AuthProvider";
 
 const settings = {
-  apiKey: 'rnzrc-FwbrpeWhaJ36Pjdg11zi3YwaIu', // Replace with your Alchemy API Key.
+  apiKey: "rnzrc-FwbrpeWhaJ36Pjdg11zi3YwaIu", // Replace with your Alchemy API Key.
   network: Network.MATIC_MUMBAI, // Replace with your network.
 };
 
 const NFTs = () => {
+  const { address, signed } = useAuth();
   const [contractNFTs, setContractNFTs] = useState(null);
   const [pageSize, setPageSize] = useState(20);
   const [pageKey, setPageKey] = useState(1);
@@ -14,10 +16,15 @@ const NFTs = () => {
 
   useEffect(() => {
     getNFTsForContract();
-  }, [pageKey, isLoading]);
+    if (signed) {
+      console.log("user has signed...");
+    } else {
+      console.log("user has not signed...");
+    }
+  }, [pageKey, isLoading, signed]);
 
   const getNFTsForContract = async () => {
-    console.log('getNFTsForContract been called......');
+    console.log("getNFTsForContract been called......");
     if (!contractNFTs) {
       setIsLoading(true);
 
@@ -30,7 +37,7 @@ const NFTs = () => {
 
       // Print total NFT collection returned in the response:
       const response = await alchemy.nft.getNftsForContract(
-        '0xE1838873761d347867fA78981B5ee4395BC8409c',
+        "0xE1838873761d347867fA78981B5ee4395BC8409c",
         queryOptions
       );
 
@@ -38,7 +45,7 @@ const NFTs = () => {
       setIsLoading(false);
       setContractNFTs(response);
     } else {
-      console.log('contracts NFTs data already loaded.....');
+      console.log("contracts NFTs data already loaded.....");
     }
   };
 
@@ -70,8 +77,8 @@ const NFTs = () => {
                   <div className="cacrd" key={i}>
                     <img
                       src={NFT.rawMetadata.image.replace(
-                        'gateway.pinata.cloud',
-                        'ipfs.digi96.com'
+                        "gateway.pinata.cloud",
+                        "ipfs.digi96.com"
                       )}
                       className="card-img-top"
                     />
