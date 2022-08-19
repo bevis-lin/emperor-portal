@@ -1,55 +1,32 @@
-import { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
-import { useRouter } from "next/router";
-import { useAuth } from "../../providers/AuthProvider";
+import { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { useRouter } from 'next/router';
+import { useAuth } from '../../providers/AuthProvider';
+import { useWeb3 } from '../../providers/Web3Provider';
 
 const Sign = () => {
-  const { signMessage } = useAuth();
-  const [install, setInstall] = useState(false);
-  const [network, setNetwork] = useState(false); //False if wrong network
-  const [cookies, setCookie] = useCookies(["signature"]);
+  const { signed, unsignMessage, setSignature } = useAuth();
+  const { isSetMetamask, netwrokID, address, signMessage } = useWeb3();
+
   const router = useRouter();
 
   const onSignMessagePressed = async () => {
     const signResult = await signMessage();
     if (signResult.success) {
-      //ßsetSignature(signResult.data);
-      //cookie.set('signature', true, signResult.data);
-      setCookie("signature", signResult.data, { path: "/" });
-      router.push("/member");
+      setSignature(signResult.data);
+      router.push('/member');
+    } else {
+      alert(signResult.status);
     }
   };
 
-  useEffect(() => {
-    const checkMetamask = async () => {
-      setInstall(!window.ethereum);
-      if (window.ethereum) {
-        const networkVersion = await window.ethereum.request({
-          method: "net_version",
-        });
-        console.log(networkVersion);
-        setNetwork(networkVersion == process.env.NEXT_PUBLIC_NET_VERSION);
-
-        window.ethereum.on("chainChanged", (networkVersion) => {
-          console.log("chainChanged", networkVersion);
-          //window.location.reload();
-          let nv10 = parseInt(networkVersion);
-          setNetwork(nv10 == process.env.NEXT_PUBLIC_NET_VERSION);
-        });
-      }
-    };
-
-    checkMetamask();
-  }, []);
-
-  if (install) return <p>Install MetaMask</p>;
-  if (!network) return <p>Detecting network or wrong network detected.</p>;
+  if (!isSetMetamask) return <p>Install MetaMask</p>;
 
   return (
     <div>
       <h1>Sign Message</h1>
       <br />
-      {network && (
+      {isSetMetamask && (
         <button
           type="button"
           className="btn btn-primary"

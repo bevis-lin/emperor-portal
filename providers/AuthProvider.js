@@ -1,19 +1,17 @@
 import React, { createContext, useContext } from 'react';
-//import { signMessage } from '../util/interactLocal.js';
-
 import useCurrentUser from '../hooks/use-current-user.hook';
 
 const AuthContext = createContext();
 
 export default function AuthProvider({ children }) {
-  const [address, signed, tools] = useCurrentUser();
+  const [signed, signature, userTools] = useCurrentUser();
 
   return (
     <AuthContext.Provider
       value={{
-        address,
         signed,
-        ...tools,
+        signature,
+        ...userTools,
       }}
     >
       {children}
