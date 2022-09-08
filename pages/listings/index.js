@@ -17,8 +17,8 @@ const Listings = ({ listings }) => {
       <div className="row row-cols-3">
         {saleListings && saleListings.length > 0 ? (
           saleListings.map((saleListing, i) => (
-            <div className="col">
-              <div className="cacrd" key={i}>
+            <div className="col" key={i}>
+              <div className="card">
                 <img
                   src={saleListing.emperor.imageUrl}
                   className="card-img-top"
